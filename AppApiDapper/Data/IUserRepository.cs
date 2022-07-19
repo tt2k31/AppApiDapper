@@ -4,10 +4,10 @@ namespace AppApiDapper.Data
 {
     public interface IUserRepository
     {
-        void Add(UserModel user);
-        List<UserModel> GetAll();
-        UserModel GetById(Guid id);
-        void Delete(Guid id);
-        void Update(UserModel user);
+        Task Add(UserModel user);
+        Task<IEnumerable<UserModel>> GetAll();
+        Task<UserModel> GetById(Guid id);
+        Task Delete(Guid id);
+        Task Update(UserModel user);
     }
 }

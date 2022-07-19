@@ -19,11 +19,11 @@ namespace AppApiDapper.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok(_repository.GetAll());
+                return Ok(await _repository.GetAll());
             }
             catch
             {
@@ -33,11 +33,11 @@ namespace AppApiDapper.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             try
             {
-                var rs = _repository.GetById(id);
+                var rs = await _repository.GetById(id);
                 if(rs == null)
                 {
                     return NotFound();
@@ -52,12 +52,11 @@ namespace AppApiDapper.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public IActionResult Post(UserModel model)
+        public async Task<IActionResult> Post(UserModel model)
         {
             try
-            {
-                
-                _repository.Add(model);
+            {                
+                await _repository.Add(model);
                 return Ok();
             }
             catch
@@ -68,7 +67,7 @@ namespace AppApiDapper.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(Guid id, UserModel model)
+        public async Task<IActionResult> Put(Guid id, UserModel model)
         {
             if(id != model.UserId)
             {
@@ -76,7 +75,7 @@ namespace AppApiDapper.Controllers
             }    
             try
             {
-                _repository.Update(model);
+                await _repository.Update(model);
                 return Ok(model);
             }
             catch
@@ -87,11 +86,11 @@ namespace AppApiDapper.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                _repository.Delete(id);
+                await _repository.Delete(id);
                 return Ok();
             }
             catch

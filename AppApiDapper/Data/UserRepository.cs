@@ -29,14 +29,14 @@ namespace AppApiDapper.Data
 
             }
         }
-        public void Add(UserModel user)
+        public async Task Add(UserModel user)
         {
             using(IDbConnection connection = Connection)
             {
                 string q = @"INSERT INTO aspnet_User (UserId, UserName,UserType) VALUES (@UserId, @UserName,@UserType)";
                 connection.Open();
                 //user.UserId = Guid.NewGuid();
-                connection.Execute(q, new
+                await connection.ExecuteAsync(q, new
                 {
                     UserId = Guid.NewGuid(),
                     UserName = user.UserName,
@@ -45,13 +45,14 @@ namespace AppApiDapper.Data
             }    
         }
        
-        public List<UserModel> GetAll()
+        public async Task<IEnumerable<UserModel>> GetAll()
         {
             using (IDbConnection connection = Connection)
             {
                 string q = @"SELECT * FROM aspnet_User";
                 //connection.Open();
-                return connection.Query<AspnetUser>(q).Select(x => new UserModel
+                var re = await connection.QueryAsync<AspnetUser>(q);
+                return re.Select(x => new UserModel
                 {
                     UserId = x.UserId,
                     UserName = x.UserName,
@@ -59,7 +60,7 @@ namespace AppApiDapper.Data
                 }).ToList();
             }
         }
-        public UserModel GetById(Guid id)
+        public async Task<UserModel> GetById(Guid id)
         {
             using (IDbConnection connection = Connection)
             {
@@ -78,23 +79,23 @@ namespace AppApiDapper.Data
                 return null;
             }
         }
-        public void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
             using (IDbConnection connection = Connection)
             {
                 string q = @"DELETE FROM aspnet_User where UserId = @Id";
                 connection.Open();
-                connection.Execute(q, new { Id = id });
+                await connection.ExecuteAsync(q, new { Id = id });
             }
         }
-        public void Update(UserModel user)
+        public async Task Update(UserModel user)
         {
             using (IDbConnection connection = Connection)
             {
                 string q = @"UPDATE aspnet_User SET UserName = @UserName, UserType = @UserType
                             where UserId = @Id";
                 connection.Open();
-                connection.Execute(q,new
+                await connection.ExecuteAsync(q,new
                 {
                     UserName = user.UserName,
                     UserType = user.UserType,

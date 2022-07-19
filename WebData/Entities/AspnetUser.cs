@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace WebData.Models
+namespace WebData.Entities
 {
     public class AspnetUser
     {
@@ -18,7 +15,7 @@ namespace WebData.Models
         public string UserName { get; set; } = null!;
         public int? UserType { get; set; }
 
-        public AspnetMembership AspnetMembership { get; set; } = null!;
+        public  AspnetMembership AspnetMembership { get; set; } = null!;
 
         public ICollection<ManagerList> ManagerLists { get; set; }
     }

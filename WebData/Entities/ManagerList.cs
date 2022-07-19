@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebData.Models
+namespace WebData.Entities
 {
     public class ManagerList
     {
@@ -16,5 +11,6 @@ namespace WebData.Models
 
         public AspnetUser AspnetUser { get; set; }
         public AspnetOrganization AspnetOrganization { get; set; }
+
     }
 }

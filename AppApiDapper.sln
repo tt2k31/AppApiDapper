@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppApiDapper", "AppApiDapper\AppApiDapper.csproj", "{1DE4E4E8-CDF7-4A21-A51B-FC830F8F4BC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppApiDapper.WebData", "WebData\AppApiDapper.WebData.csproj", "{F8F5D281-6737-4E25-9FEC-8412B9E0F6BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebData", "WebData\WebData.csproj", "{7C0118A5-5812-4A30-95F1-3B6D04300BC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{1DE4E4E8-CDF7-4A21-A51B-FC830F8F4BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DE4E4E8-CDF7-4A21-A51B-FC830F8F4BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DE4E4E8-CDF7-4A21-A51B-FC830F8F4BC4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8F5D281-6737-4E25-9FEC-8412B9E0F6BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8F5D281-6737-4E25-9FEC-8412B9E0F6BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8F5D281-6737-4E25-9FEC-8412B9E0F6BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8F5D281-6737-4E25-9FEC-8412B9E0F6BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0118A5-5812-4A30-95F1-3B6D04300BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0118A5-5812-4A30-95F1-3B6D04300BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0118A5-5812-4A30-95F1-3B6D04300BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0118A5-5812-4A30-95F1-3B6D04300BC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

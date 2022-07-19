@@ -42,7 +42,7 @@ namespace AppApiDapper.Controllers
                 {
                     return NotFound();
                 }
-                return Ok();
+                return Ok(rs);
             }
             catch
             {
@@ -77,7 +77,7 @@ namespace AppApiDapper.Controllers
             try
             {
                 _repository.Update(model);
-                return Ok();
+                return Ok(model);
             }
             catch
             {

@@ -1,4 +1,5 @@
 ﻿using AppApiDapper.Models;
+using WebData.Models;
 
 namespace AppApiDapper.Services
 {

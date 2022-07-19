@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
+using WebData.Entities;
 namespace AppApiDapper.Models
 {
     public class MyDBContext : DbContext

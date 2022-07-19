@@ -1,4 +1,5 @@
-﻿using AppApiDapper.Models;
+﻿using WebData.Models;
+using WebData.Entities;
 using AppApiDapper.Services;
 using Dapper;
 using Microsoft.Data.SqlClient;

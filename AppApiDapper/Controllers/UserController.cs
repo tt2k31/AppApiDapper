@@ -1,5 +1,6 @@
 ﻿using AppApiDapper.Data;
 using AppApiDapper.Models;
+using WebData.Models;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860

@@ -24,10 +24,10 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using (var uow = new UnitOfWork(_config.GetConnectionString("Mydb")))
+                using (var uow = new UnitOfWork(_config))
                 {
                     var ds = uow.MembershipRepository.GetAll();
-                    uow.Commit();
+                    
                     return Ok(ds);
                 }
             }
@@ -43,10 +43,10 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using (var uow = new UnitOfWork(_config.GetConnectionString("Mydb")))
+                using (var uow = new UnitOfWork(_config))
                 {
                     var ds = uow.MembershipRepository.Get(id);
-                    uow.Commit();
+                    
                     return Ok(ds);
                 }
             }
@@ -62,7 +62,7 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-            using (var uow = new UnitOfWork(_config.GetConnectionString("mydb")))
+            using (var uow = new UnitOfWork(_config))
                 {
                     uow.MembershipRepository.Add(model);
                     uow.Commit();
@@ -81,7 +81,7 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using (var uow = new UnitOfWork(_config.GetConnectionString("mydb")))
+                using (var uow = new UnitOfWork(_config))
                 {
                     uow.MembershipRepository.Update(model);
                     uow.Commit();
@@ -100,7 +100,7 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using (var uow = new UnitOfWork(_config.GetConnectionString("mydb")))
+                using (var uow = new UnitOfWork(_config))
                 {
                     uow.MembershipRepository.Delete(id);
                     uow.Commit();

@@ -1,35 +1,31 @@
 ﻿using AppApiDapper.Models;
+using AppApiDapper.Services.Interface;
 using WebData.Entities;
 using WebData.Models;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace AppApiDapper.Services
+namespace AppApiDapper.Services.Repository
 {
-    public class OrganizationRepository : IOrganizationRepository
+    public class OrganizationRepository : RepositoryBase, IOrganizationRepository
     {
-        private readonly IConfiguration _config;
 
-        public OrganizationRepository(IConfiguration config)
+        public OrganizationRepository(IDbTransaction transaction) : base(transaction)
         {
-            _config = config;
         }
-        public IDbConnection db
-        { get
+
+        public async Task Add(OrganizationModel model)
+        {
+            if (model == null)
             {
-                return new SqlConnection(_config.GetConnectionString("MyDb"));
+                throw new NotImplementedException();
             }
-        }
+            string q = "INSERT INTO aspnet_Organization (OrganizationId, OrganizationCode, OrganizationName, PhoneNumber, Description, Status)" +
+                "VALUES (@OrganizationId, @OrganizationCode, @OrganizationName, @PhoneNumber, @Description, @Status)";
 
-        public void Add(OrganizationModel model)
-        {
-            using(IDbConnection connection = db)
-            {
-                string q = "INSERT INTO aspnet_Organization (OrganizationId, OrganizationCode, OrganizationName, PhoneNumber, Description, Status)" +
-                    "VALUES (@OrganizationId, @OrganizationCode, @OrganizationName, @PhoneNumber, @Description, @Status)";
-                connection.Open();
-                connection.Execute(q, new
+            await Connection.ExecuteAsync(q,
+                param: new
                 {
                     OrganizationId = Guid.NewGuid(),
                     OrganizationCode = model.OrganizationCode,
@@ -37,83 +33,82 @@ namespace AppApiDapper.Services
                     PhoneNumber = model.PhoneNumber,
                     Description = model.Description,
                     Status = model.Status,
-                });
-            }
+                },
+                transaction: Transaction);
+
         }
 
-        public void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            using(IDbConnection connection = db)
-            {
-                string q = "DELETE FROM aspnet_Organization WHERE OrganizationId = @OrganizationId";
-                connection.Open();
-                connection.Execute(q, new { OrganizationId = id });
-            }
+            string q = "DELETE FROM aspnet_Organization " +
+            "WHERE OrganizationId = @OrganizationId";
+
+            await Connection.ExecuteAsync(q,
+                param: new { OrganizationId = id },
+                transaction: Transaction
+                );
         }
 
-        public List<OrganizationModel> Get()
+        public async Task<IEnumerable<OrganizationModel>> All()
         {
-            using (IDbConnection connection = db)
+            string q = "SELECT * FROM aspnet_Organization";
+            var rs = await Connection.QueryAsync<AspnetOrganization>(q,
+                            transaction: Transaction);
+            return rs.Select(x => new OrganizationModel
             {
-                string q = "SELECT * FROM aspnet_Organization";
-                connection.Open();
-                return connection.Query<AspnetOrganization>(q).Select(x => new OrganizationModel
-                {
-                    OrganizationId = x.OrganizationId,
-                    OrganizationCode = x.OrganizationCode,
-                    OrganizationName = x.OrganizationName,
-                    PhoneNumber = x.PhoneNumber,
-                    Description = x.Description,
-                    Status = x.Status,
-                }).ToList();
-            }
+                OrganizationId = x.OrganizationId,
+                OrganizationCode = x.OrganizationCode,
+                OrganizationName = x.OrganizationName,
+                PhoneNumber = x.PhoneNumber,
+                Description = x.Description,
+                Status = x.Status,
+            }).ToList();
+
         }
 
-        public OrganizationModel GetById(Guid id)
+        public async Task<OrganizationModel> GetById(Guid id)
         {
-            using(IDbConnection connection = db)
-            {
-                string q = "SELECT * FROM aspnet_Organization WHERE OrganizationId = @OrganizationId";
-                connection.Open();
-                var rs = connection.Query<AspnetOrganization>(q, new { OrganizationId = id }).FirstOrDefault();
-                if(rs == null)
-                {
-                    return null;
-                }
-                return new OrganizationModel
-                {
-                    OrganizationId = rs.OrganizationId,
-                    OrganizationCode = rs.OrganizationCode,
-                    OrganizationName = rs.OrganizationName,
-                    PhoneNumber = rs.PhoneNumber,
-                    Description = rs.Description,
-                    Status = rs.Status,
-                };
-            }
-        }
+            string q = "SELECT * FROM aspnet_Organization " +
+            "WHERE OrganizationId = @OrganizationId";
 
-        public void Update(OrganizationModel model)
-        {
-            using(IDbConnection connection = db)
+            var rs = await Connection.QueryAsync<AspnetOrganization>(q,
+                param: new { OrganizationId = id },
+                transaction: Transaction);
+            if (rs == null)
             {
-                //OrganizationId, OrganizationCode, OrganizationName, PhoneNumber, Description, Status
-                string q = @"UPDATE aspnet_Organization SET OrganizationCode = @OrganizationCode, 
+                return null;
+            }
+            return rs.Select(x => new OrganizationModel
+            {
+                OrganizationId = x.OrganizationId,
+                OrganizationCode = x.OrganizationCode,
+                OrganizationName = x.OrganizationName,
+                PhoneNumber = x.PhoneNumber,
+                Description = x.Description,
+                Status = x.Status,
+            }).FirstOrDefault();
+        }
+        public async Task Update(OrganizationModel model)
+        {
+            string q = @"UPDATE aspnet_Organization SET OrganizationCode = @OrganizationCode, 
                                 OrganizationName = @OrganizationName, 
                                 PhoneNumber = @PhoneNumber,
                                 Description = @Description,
                                 Status = @Status
                                 where OrganizationId = @OrganizationId";
-                connection.Open();
-                connection.Execute(q, new
-                {
-                    OrganizationId = model.OrganizationId,
-                    OrganizationCode = model.OrganizationCode,
-                    OrganizationName = model.OrganizationName,
-                    PhoneNumber = model.PhoneNumber,
-                    Description = model.Description,
-                    Status = model.Status,
-                });
-            }    
+
+            await Connection.ExecuteAsync(q, param: new
+            {
+                OrganizationId = model.OrganizationId,
+                OrganizationCode = model.OrganizationCode,
+                OrganizationName = model.OrganizationName,
+                PhoneNumber = model.PhoneNumber,
+                Description = model.Description,
+                Status = model.Status,
+            },
+            transaction: Transaction
+            );
         }
     }
 }
+

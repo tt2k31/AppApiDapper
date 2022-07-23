@@ -10,21 +10,24 @@ namespace AppApiDapper.Controllers
     [ApiController]
     public class OrganizationController : ControllerBase
     {
-        private readonly IOrganizationRepository _repository;
-
-        public OrganizationController(IOrganizationRepository repository)
+        private readonly IConfiguration _config;
+        public OrganizationController(IConfiguration config)
         {
-            _repository = repository;
+            _config = config;
         }
 
         // GET: api/<OrganizationController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                
-                return Ok(_repository.Get());
+                using (var uow = new UnitOfWork(_config))
+                {
+                    var ds = await uow.OrganizationRepository.All();
+                    uow.Commit();
+                    return Ok(ds);
+                }
             }
             catch
             {
@@ -34,11 +37,16 @@ namespace AppApiDapper.Controllers
 
         // GET api/<OrganizationController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             try
             {
-                return Ok(_repository.GetById(id));
+                using (var uow = new UnitOfWork(_config))
+                {
+                    var ds = await uow.OrganizationRepository.GetById(id);
+                    uow.Commit();
+                    return Ok(ds);
+                }
             }
             catch
             {
@@ -48,12 +56,16 @@ namespace AppApiDapper.Controllers
 
         // POST api/<OrganizationController>
         [HttpPost]
-        public IActionResult Post(OrganizationModel model)
+        public async Task<IActionResult> Post(OrganizationModel model)
         {
             try
             {
-                _repository.Add(model);
-                return Ok();
+                using (var uow = new UnitOfWork(_config))
+                {
+                    await uow.OrganizationRepository.Add(model);
+                    uow.Commit();
+                    return Ok();
+                }
             }
             catch
             {
@@ -63,16 +75,16 @@ namespace AppApiDapper.Controllers
 
         // PUT api/<OrganizationController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(Guid id, OrganizationModel model)
-        {
-            if(id != model.OrganizationId)
-            {
-                return NotFound();
-            }    
+        public async Task<IActionResult> Put(Guid id, OrganizationModel model)
+        {  
             try
             {
-                _repository.Update(model);
-                return Ok();
+                using (var uow = new UnitOfWork(_config))
+                {
+                    await uow.OrganizationRepository.Update(model);
+                    uow.Commit();
+                    return Ok();
+                }
             }
             catch
             {
@@ -82,12 +94,16 @@ namespace AppApiDapper.Controllers
 
         // DELETE api/<OrganizationController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                _repository.Delete(id);
-                return Ok();
+                using (var uow = new UnitOfWork(_config))
+                {
+                    await uow.OrganizationRepository.Delete(id);
+                    uow.Commit();
+                    return Ok();
+                }
             }
             catch
             {

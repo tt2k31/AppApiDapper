@@ -1,7 +1,9 @@
-﻿using AppApiDapper.Data;
-using AppApiDapper.Models;
+﻿using AppApiDapper.Models;
+using AppApiDapper.Services.Repository;
+using AppApiDapper.Services.Interface;
 using WebData.Models;
 using Microsoft.AspNetCore.Mvc;
+using AppApiDapper.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,25 +12,28 @@ namespace AppApiDapper.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
-    {
-        private readonly IUserRepository _repository;
-
-        public UserController(IUserRepository repository)
-        {
-            _repository = repository;
+    {        
+        private readonly IConfiguration _config;
+        public UserController(IConfiguration config)
+        {            
+            _config = config;
         }
 
-        // GET: api/<UserController>
+        // GET: api/<UserController>v
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok(await _repository.GetAll());
+                using (var uow = new UnitOfWork(_config))
+                {
+                    var ds = await uow.UserRepository.All();                    
+                    return Ok(ds);
+                }
             }
             catch
             {
-                return NotFound();
+                return BadRequest();
             }
         }
 
@@ -38,12 +43,11 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                var rs = await _repository.GetById(id);
-                if(rs == null)
+                using (var uow = new UnitOfWork(_config))
                 {
-                    return NotFound();
+                    var ds = await uow.UserRepository.GetById(id);
+                    return Ok(ds);
                 }
-                return Ok(rs);
             }
             catch
             {
@@ -56,9 +60,13 @@ namespace AppApiDapper.Controllers
         public async Task<IActionResult> Post(UserModel model)
         {
             try
-            {                
-                await _repository.Add(model);
-                return Ok();
+            {
+                using (var uow = new UnitOfWork(_config))
+                {
+                    await uow.UserRepository.Add(model);
+                    uow.Commit();
+                    return Ok();
+                }
             }
             catch
             {
@@ -70,14 +78,14 @@ namespace AppApiDapper.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, UserModel model)
         {
-            if(id != model.UserId)
-            {
-                return NotFound();
-            }    
             try
             {
-                await _repository.Update(model);
-                return Ok(model);
+                using (var uow = new UnitOfWork(_config))
+                {
+                    await uow.UserRepository.Update(model);
+                    uow.Commit();
+                    return Ok();
+                }
             }
             catch
             {
@@ -91,8 +99,12 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                await _repository.Delete(id);
-                return Ok();
+                using (var uow = new UnitOfWork(_config))
+                {
+                    await uow.UserRepository.Delete(id);
+                    uow.Commit();
+                    return Ok();
+                }
             }
             catch
             {

@@ -1,6 +1,8 @@
-using AppApiDapper.Data;
 using AppApiDapper.Models;
 using AppApiDapper.Services;
+using AppApiDapper.Services.Interface;
+using AppApiDapper.Services.Repository;
+
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +17,7 @@ builder.Services.AddDbContext<MyDBContext>(o =>
 builder.Services.Configure<Appsettings>
     (builder.Configuration.GetSection("AppSettings"));
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+
 builder.Services.AddCors(o => o.AddPolicy(name: "allowCors",
     policy =>
     {

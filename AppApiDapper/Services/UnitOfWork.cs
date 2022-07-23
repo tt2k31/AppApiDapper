@@ -1,4 +1,6 @@
-﻿using AppApiDapper.Services.Repository;
+﻿using AppApiDapper.Models;
+using AppApiDapper.Services.Interface;
+using AppApiDapper.Services.Repository;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -9,17 +11,32 @@ namespace AppApiDapper.Services
         private IDbConnection _connection;
         private IDbTransaction _transaction;
         private bool _disposed;
+        private readonly MyDBContext _context;
+        
+        
 
+        private IOrganizationRepository _organizationRepository;
         private IManagerListRepository _managerListRepository;
         private IMembershipRepository _membershipRepository;
-        public UnitOfWork(string connectionString)
+        private IUserRepository _userRepository;
+        
+
+        public UnitOfWork(IConfiguration config)
         {
-            _connection = new SqlConnection(connectionString);
+            
+            _connection = new SqlConnection(config.GetConnectionString("MyDb"));
             _connection.Open();
             _transaction = _connection.BeginTransaction();
         }
 
-        public IOrganizationRepository OrganizationRepository => throw new NotImplementedException();
+        public IOrganizationRepository OrganizationRepository
+        {
+            get
+            {
+                return _organizationRepository ??
+                    (_organizationRepository = new OrganizationRepository(_transaction));
+            }
+        }
 
         public IManagerListRepository ManagerListRepository
         {
@@ -35,6 +52,14 @@ namespace AppApiDapper.Services
             {
                 return _membershipRepository ??
                     (_membershipRepository = new MembershipRepository(_transaction));
+            }
+        }
+        public IUserRepository UserRepository
+        {
+            get
+            {
+                return _userRepository ??
+                    (_userRepository = new UserRepository(_transaction));
             }
         }
         public void Commit()

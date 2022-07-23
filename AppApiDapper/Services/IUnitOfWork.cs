@@ -1,4 +1,5 @@
 ﻿using AppApiDapper.Services.Repository;
+using AppApiDapper.Services.Interface;
 
 namespace AppApiDapper.Services
 {

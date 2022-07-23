@@ -23,7 +23,7 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using (var uow = new UnitOfWork(_config.GetConnectionString("mydb")))
+                using (var uow = new UnitOfWork(_config))
                 {
                     var ds = uow.ManagerListRepository.GetAll();
                     uow.Commit();
@@ -43,7 +43,7 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using(var uow = new UnitOfWork(_config.GetConnectionString("Mydb")))
+                using(var uow = new UnitOfWork(_config))
                 {
                     var ds = uow.ManagerListRepository.GetId(Id);
                     uow.Commit();
@@ -63,7 +63,7 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using (var uow = new UnitOfWork(_config.GetConnectionString("Mydb")))
+                using (var uow = new UnitOfWork(_config))
                 {
                     uow.ManagerListRepository.Create(model);
                     uow.Commit();
@@ -88,7 +88,7 @@ namespace AppApiDapper.Controllers
         {
             try
             {
-                using (var uow = new UnitOfWork(_config.GetConnectionString("Mydb")))
+                using (var uow = new UnitOfWork(_config))
                 {
                     uow.ManagerListRepository.Delete(id);
                     uow.Commit();

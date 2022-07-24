@@ -6,8 +6,9 @@ namespace WebData.Models
     {
         
         public Guid UserId { get; set; }
-        public string UserName { get; set; } = null!;
+        public string UserName { get; set; } 
         public int? UserType { get; set; }
+        public string password { get; set; } 
 
     }
 }

@@ -1,4 +1,4 @@
-﻿
+﻿using AppApiDapper.Services.Interface;
 using WebData.Entities;
 using WebData.Models;
 using Dapper;
@@ -12,16 +12,14 @@ namespace AppApiDapper.Services.Repository
         {
         }
 
-        public void Add(MembershipModel model)
+        public async Task Add(MembershipModel model)
         {
             if(model == null)
             {
                 throw new ArgumentNullException("model");
             }
-            string q = @"INSERT INTO aspnet_Membership 
-                        (UserId, FullName, Address, PhoneNumber, Email, Status)
-                        VALUES(@UserId, @FullName, @Address, @PhoneNumber, @Email, @Status)";
-            Connection.Execute(q,
+            string q = @"exec  usp_MembershipAdd @UserId, @FullName, @Address, @PhoneNumber, @Email, @Status";
+            await Connection.ExecuteAsync(q,
                 param: new
                 {
                     UserId = model.UserId,
@@ -35,22 +33,23 @@ namespace AppApiDapper.Services.Repository
                 );                
         }
 
-        public void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            string q = "DELETE FROM aspnet_Membership WHERE UserId = @FindId";
-            Connection.Execute(q,
+            string q = "exec usp_MembershipDelete @FindId";
+            await Connection.ExecuteAsync(q,
                 param: new { FindId = id },
                 transaction: Transaction
                 );
         }
 
-        public MembershipModel Get(Guid id)
+        public async Task<MembershipModel> GetById(Guid id)
         {
-            string q = "SELECT * FROM aspnet_Membership WHERE UserId = @FindId";
-            return Connection.Query<MembershipModel>(q,
+            string q = "exec usp_MembershipGetById @FindId";
+            var rs = await Connection.QueryAsync<MembershipModel>(q,
                     param: new { FindId = id },
                     transaction: Transaction
-                ).Select(x => new MembershipModel
+                );
+            return rs.Select(x => new MembershipModel
                 {
                     UserId = x.UserId,
                     FullName = x.FullName,
@@ -61,12 +60,13 @@ namespace AppApiDapper.Services.Repository
                 }).FirstOrDefault();
         }
 
-        public List<MembershipModel> GetAll()
+        public async Task<IEnumerable<MembershipModel>> All()
         {
-            string q = "SELECT * FROM aspnet_Membership";
-            return Connection.Query<MembershipModel>(q,
+            string q = "exec usp_MembershipGetAll";
+            var rs = await Connection.QueryAsync<MembershipModel>(q,
                 transaction: Transaction
-                ).Select(x => new MembershipModel
+                );
+            return rs.Select(x => new MembershipModel
                 {
                     UserId = x.UserId,
                     FullName = x.FullName,
@@ -77,13 +77,10 @@ namespace AppApiDapper.Services.Repository
                 }).ToList();
         }
 
-        public void Update(MembershipModel model)
+        public async Task Update(MembershipModel model)
         {
-            string q = @"UPDATE aspnet_Membership SET
-                    FullName = @FullName, Address = @Address, 
-                    PhoneNumber = @PhoneNumber, Email = @Email, Status = @Status
-                    WHERE UserId = @UserId";
-            Connection.Execute(q,
+            string q = @"exec  usp_MembershipUpdate @UserId, @FullName, @Address, @PhoneNumber, @Email, @Status";
+            await Connection.ExecuteAsync(q,
                 param: new
                 {
                     UserId = model.UserId,

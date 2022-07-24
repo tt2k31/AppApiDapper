@@ -5,5 +5,6 @@ namespace AppApiDapper.Services.Interface
 {
     public interface IUserRepository : IGenericRepository<UserModel>
     {
+        Task<IEnumerable<UserModel>> GetAll(int index);
     }
 }

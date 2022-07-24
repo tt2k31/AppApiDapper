@@ -20,14 +20,14 @@ namespace AppApiDapper.Controllers
         }
 
         // GET: api/<UserController>v
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("{index:int}")]
+        public async Task<IActionResult> GetAll(int index)
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
-                    var ds = await uow.UserRepository.All();                    
+                    var ds = await uow.UserRepository.GetAll(index);                    
                     return Ok(ds);
                 }
             }

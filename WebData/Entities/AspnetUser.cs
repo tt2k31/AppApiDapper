@@ -14,6 +14,7 @@ namespace WebData.Entities
         public Guid UserId { get; set; }
         public string UserName { get; set; } = null!;
         public int? UserType { get; set; }
+        public string password { get; set; }
 
         public  AspnetMembership AspnetMembership { get; set; } = null!;
 

@@ -21,8 +21,7 @@ namespace AppApiDapper.Services.Repository
             {
                 throw new NotImplementedException();
             }
-            string q = "INSERT INTO aspnet_Organization (OrganizationId, OrganizationCode, OrganizationName, PhoneNumber, Description, Status)" +
-                "VALUES (@OrganizationId, @OrganizationCode, @OrganizationName, @PhoneNumber, @Description, @Status)";
+            string q = "exec usp_OrganizationAdd @OrganizationId, @OrganizationCode, @OrganizationName, @PhoneNumber, @Description, @Status";
 
             await Connection.ExecuteAsync(q,
                 param: new
@@ -40,8 +39,7 @@ namespace AppApiDapper.Services.Repository
 
         public async Task Delete(Guid id)
         {
-            string q = "DELETE FROM aspnet_Organization " +
-            "WHERE OrganizationId = @OrganizationId";
+            string q = "exec usp_deleteOrganization @OrganizationId";
 
             await Connection.ExecuteAsync(q,
                 param: new { OrganizationId = id },
@@ -51,7 +49,7 @@ namespace AppApiDapper.Services.Repository
 
         public async Task<IEnumerable<OrganizationModel>> All()
         {
-            string q = "SELECT * FROM aspnet_Organization";
+            string q = "exec usp_getOrganization";
             var rs = await Connection.QueryAsync<AspnetOrganization>(q,
                             transaction: Transaction);
             return rs.Select(x => new OrganizationModel
@@ -68,8 +66,7 @@ namespace AppApiDapper.Services.Repository
 
         public async Task<OrganizationModel> GetById(Guid id)
         {
-            string q = "SELECT * FROM aspnet_Organization " +
-            "WHERE OrganizationId = @OrganizationId";
+            string q = "exec usp_getOrganizationId @OrganizationId";
 
             var rs = await Connection.QueryAsync<AspnetOrganization>(q,
                 param: new { OrganizationId = id },
@@ -90,12 +87,7 @@ namespace AppApiDapper.Services.Repository
         }
         public async Task Update(OrganizationModel model)
         {
-            string q = @"UPDATE aspnet_Organization SET OrganizationCode = @OrganizationCode, 
-                                OrganizationName = @OrganizationName, 
-                                PhoneNumber = @PhoneNumber,
-                                Description = @Description,
-                                Status = @Status
-                                where OrganizationId = @OrganizationId";
+            string q = @"exec usp_OrganizationUpdate @OrganizationId, @OrganizationCode, @OrganizationName, @PhoneNumber, @Description, @Status";
 
             await Connection.ExecuteAsync(q, param: new
             {

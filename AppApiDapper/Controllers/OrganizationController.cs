@@ -25,7 +25,6 @@ namespace AppApiDapper.Controllers
                 using (var uow = new UnitOfWork(_config))
                 {
                     var ds = await uow.OrganizationRepository.All();
-                    uow.Commit();
                     return Ok(ds);
                 }
             }
@@ -44,7 +43,6 @@ namespace AppApiDapper.Controllers
                 using (var uow = new UnitOfWork(_config))
                 {
                     var ds = await uow.OrganizationRepository.GetById(id);
-                    uow.Commit();
                     return Ok(ds);
                 }
             }

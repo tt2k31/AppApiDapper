@@ -19,14 +19,15 @@ namespace AppApiDapper.Services.Repository
                 throw new NotImplementedException();
             }
             //string q = @"INSERT INTO aspnet_User (UserId, UserName,UserType) 
-            //                VALUES (@UserId, @UserName,@UserType)";
-            string q = @"exec usp_userAdd @UserId, @UserName,@UserType";
+            //                VALUES (@UserId, @UserName,@UserType)";password = @password
+            string q = @"exec usp_userAdd @UserId, @UserName,@UserType,@password";
             await Connection.ExecuteAsync(q, 
                 param: new
                 {
                     UserId = Guid.NewGuid(),
                     UserName = entity.UserName,
-                    UserType = entity.UserType
+                    UserType = entity.UserType,
+                    password = entity.password
                 },
                 transaction: Transaction
                 );
@@ -42,6 +43,7 @@ namespace AppApiDapper.Services.Repository
                 UserId = x.UserId,
                 UserName = x.UserName,
                 UserType = x.UserType,
+                password = x.password
             }).ToList();
         }
 
@@ -67,22 +69,38 @@ namespace AppApiDapper.Services.Repository
             {
                 UserId = x.UserId,
                 UserName = x.UserName,
-                UserType = x.UserType
+                UserType = x.UserType,
+                password = x.password
             }).FirstOrDefault();
         }
 
         public async Task Update(UserModel entity)
         {
-            string q = @"exec usp_userUpdate @UserId, @UserName,@UserType ";
+            string q = @"exec usp_userUpdate @UserId, @UserName,@UserType,@password ";
             await Connection.ExecuteAsync(q,
                 param: new
                 {
                     UserId = entity.UserId,
                     UserName = entity.UserName,
-                    UserType = entity.UserType,                    
+                    UserType = entity.UserType,
+                    password = entity.password
                 },
                 transaction: Transaction
                 );
+        }
+        public async Task<IEnumerable<UserModel>> GetAll(int index)
+        {
+            string q = @"exec usp_getUser";
+            var rs = await Connection.QueryAsync<AspnetUser>(q,
+                            transaction: Transaction);
+            
+            return rs.Select(x => new UserModel
+            {
+                UserId = x.UserId,
+                UserName = x.UserName,
+                UserType = x.UserType,
+                password = x.password
+            }).ToList().Skip((index - 1) * 2).Take(2);
         }
     }
 

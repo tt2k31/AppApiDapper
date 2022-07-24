@@ -71,6 +71,8 @@ namespace AppApiDapper.Models
                 e.Property(e => e.UserName)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+                e.Property(e => e.password)
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<AspnetOrganization>(e =>

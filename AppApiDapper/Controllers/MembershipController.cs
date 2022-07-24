@@ -20,14 +20,13 @@ namespace AppApiDapper.Controllers
 
         // GET: api/<MembershipController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
-                    var ds = uow.MembershipRepository.GetAll();
-                    
+                    var ds = await uow.MembershipRepository.All();                    
                     return Ok(ds);
                 }
             }
@@ -39,14 +38,13 @@ namespace AppApiDapper.Controllers
 
         // GET api/<MembershipController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
-                    var ds = uow.MembershipRepository.Get(id);
-                    
+                    var ds = await uow.MembershipRepository.GetById(id);                    
                     return Ok(ds);
                 }
             }
@@ -58,13 +56,13 @@ namespace AppApiDapper.Controllers
 
         // POST api/<MembershipController>
         [HttpPost]
-        public IActionResult Post(MembershipModel model)
+        public async Task<IActionResult> Post(MembershipModel model)
         {
             try
             {
             using (var uow = new UnitOfWork(_config))
                 {
-                    uow.MembershipRepository.Add(model);
+                    await uow.MembershipRepository.Add(model);
                     uow.Commit();
                     return Ok();
                 }
@@ -77,13 +75,13 @@ namespace AppApiDapper.Controllers
 
         // PUT api/<MembershipController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(Guid id, MembershipModel model)
+        public async Task<IActionResult> Put(Guid id, MembershipModel model)
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
-                    uow.MembershipRepository.Update(model);
+                    await uow.MembershipRepository.Update(model);
                     uow.Commit();
                     return Ok();
                 }
@@ -96,13 +94,13 @@ namespace AppApiDapper.Controllers
 
         // DELETE api/<MembershipController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
-                    uow.MembershipRepository.Delete(id);
+                    await uow.MembershipRepository.Delete(id);
                     uow.Commit();
                     return Ok();
                 }

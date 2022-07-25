@@ -9,6 +9,8 @@ namespace AppApiDapper.Services
         IManagerListRepository ManagerListRepository { get; }
         IMembershipRepository MembershipRepository { get; }
 
-        void Commit();
+        
+        Task Commit();
+        Task CompleteAsync();
     }
 }

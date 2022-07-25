@@ -61,7 +61,7 @@ namespace AppApiDapper.Controllers
                 using (var uow = new UnitOfWork(_config))
                 {
                     await uow.OrganizationRepository.Add(model);
-                    uow.Commit();
+                    await uow.Commit();
                     return Ok();
                 }
             }
@@ -80,7 +80,7 @@ namespace AppApiDapper.Controllers
                 using (var uow = new UnitOfWork(_config))
                 {
                     await uow.OrganizationRepository.Update(model);
-                    uow.Commit();
+                    await uow.Commit();
                     return Ok();
                 }
             }
@@ -99,7 +99,7 @@ namespace AppApiDapper.Controllers
                 using (var uow = new UnitOfWork(_config))
                 {
                     await uow.OrganizationRepository.Delete(id);
-                    uow.Commit();
+                    await uow.Commit();
                     return Ok();
                 }
             }

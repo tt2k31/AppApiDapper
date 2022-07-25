@@ -6,6 +6,9 @@ using AppApiDapper.Services.Interface;
 using AppApiDapper.Services.Repository;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 try
@@ -23,6 +26,26 @@ try
         (builder.Configuration.GetSection("AppSettings"));
 
 
+    ConfigurationManager configuration = builder.Configuration;
+    var k = configuration["AppSettings:SecretKey"];
+
+    var secretKeyByte = Encoding.UTF8.GetBytes(k);
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        //tu cap token
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+
+                        //Ky vao token
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(secretKeyByte),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+    builder.Services.AddScoped<ILogin, LoginReporitory>();
     builder.Services.AddCors(o => o.AddPolicy(name: "allowCors",
         policy =>
         {

@@ -2,25 +2,31 @@
 using AppApiDapper.Services.Interface;
 using AppApiDapper.Services.Repository;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 using System.Data;
 
 namespace AppApiDapper.Services
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private readonly ILogger<UnitOfWork> _logger;
         private IDbConnection _connection;
         private IDbTransaction _transaction;
         private bool _disposed;
-        private readonly MyDBContext _context;
-        
-        
+        private MyDBContext _context;
 
+
+        private ILogin _login;
         private IOrganizationRepository _organizationRepository;
         private IManagerListRepository _managerListRepository;
         private IMembershipRepository _membershipRepository;
         private IUserRepository _userRepository;
         
 
+        public UnitOfWork(ILogger<UnitOfWork> logger)
+        {
+            _logger = logger;
+        }
         public UnitOfWork(IConfiguration config)
         {
             
@@ -62,14 +68,24 @@ namespace AppApiDapper.Services
                     (_userRepository = new UserRepository(_transaction));
             }
         }
-        public void Commit()
+        public ILogin Login
+        {
+            get
+            {
+                return _login ??
+                (_login = new LoginReporitory(_context));
+            }
+            
+        }
+        public async Task Commit()
         {
             try
             {
                 _transaction.Commit();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError("err Commit: "+ ex.Message);
                 _transaction.Rollback();
                 throw;
             }
@@ -79,6 +95,10 @@ namespace AppApiDapper.Services
                 _transaction = _connection.BeginTransaction();
                 resetRepositories();
             }
+        }
+        public async Task CompleteAsync()
+        {
+            await _context.SaveChangesAsync();
         }
         private void resetRepositories()
         {
@@ -110,6 +130,11 @@ namespace AppApiDapper.Services
                 }
                 _disposed = true;
             }
+        }
+
+        public Task CommitAsync()
+        {
+            throw new NotImplementedException();
         }
 
         ~UnitOfWork()

@@ -16,7 +16,8 @@ namespace AppApiDapper.Services.Repository
         {
             if (entity == null)
             {
-                throw new NotImplementedException();
+                
+                
             }
             //string q = @"INSERT INTO aspnet_User (UserId, UserName,UserType) 
             //                VALUES (@UserId, @UserName,@UserType)";password = @password

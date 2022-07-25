@@ -19,14 +19,14 @@ namespace AppApiDapper.Controllers
 
         // GET: api/<ManagerListController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
                     var ds = uow.ManagerListRepository.GetAll();
-                    uow.Commit();
+                    await uow.Commit();
                     return Ok(ds);
                 }
             }
@@ -39,14 +39,14 @@ namespace AppApiDapper.Controllers
 
         // GET api/<ManagerListController>/5
         [HttpGet("{Id:guid}")]
-        public IActionResult GetByUserId(Guid Id)
+        public async Task<IActionResult> GetByUserId(Guid Id)
         {
             try
             {
                 using(var uow = new UnitOfWork(_config))
                 {
                     var ds = uow.ManagerListRepository.GetId(Id);
-                    uow.Commit();
+                    await uow.Commit();
                     return Ok(ds);
                 }
             }
@@ -59,14 +59,14 @@ namespace AppApiDapper.Controllers
 
         // POST api/<ManagerListController>
         [HttpPost]
-        public IActionResult Post(ManagerListModel model)
+        public async Task<IActionResult> Post(ManagerListModel model)
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
                     uow.ManagerListRepository.Create(model);
-                    uow.Commit();
+                    await uow.Commit();
                     return Ok();
                 }
             }
@@ -84,14 +84,14 @@ namespace AppApiDapper.Controllers
 
         // DELETE api/<ManagerListController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
                     uow.ManagerListRepository.Delete(id);
-                    uow.Commit();
+                    await uow.Commit();
                     return Ok();
                 }
             }

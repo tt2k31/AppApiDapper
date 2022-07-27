@@ -1,4 +1,5 @@
-﻿using AppApiDapper.Services.Interface;
+﻿using AppApiDapper.Models;
+using AppApiDapper.Services.Interface;
 using Dapper;
 using System.Data;
 using WebData.Entities;
@@ -8,19 +9,18 @@ namespace AppApiDapper.Services.Repository
 {
     public class UserRepository : RepositoryBase, IUserRepository
     {
-        public UserRepository(IDbTransaction transaction) : base(transaction)
+        private readonly MyDBContext _context;
+        public UserRepository(IDbTransaction transaction, MyDBContext context) : base(transaction)
         {            
+            _context = context;
         }
 
         public async Task Add(UserModel entity)
         {
             if (entity == null)
-            {
-                
-                
+            {                                
             }
-            //string q = @"INSERT INTO aspnet_User (UserId, UserName,UserType) 
-            //                VALUES (@UserId, @UserName,@UserType)";password = @password
+            
             string q = @"exec usp_userAdd @UserId, @UserName,@UserType,@password";
             await Connection.ExecuteAsync(q, 
                 param: new
@@ -50,10 +50,15 @@ namespace AppApiDapper.Services.Repository
 
         public async Task Delete(Guid id)
         {
-            string q = @"exec usp_deleteUser @Id";
-            await Connection.ExecuteAsync(q,
-                param: new { Id = id },
-                transaction: Transaction);
+            //string q = @"exec usp_deleteUser @Id";
+            //await Connection.ExecuteAsync(q,
+            //    param: new { Id = id },
+            //    transaction: Transaction);
+            var user = _context.AspnetUsers.SingleOrDefault(u => u.UserId == id);
+            if (user == null)
+            {                
+            }
+            _context.AspnetUsers.Remove(user);
         }
 
         public async Task<UserModel> GetById(Guid id)
@@ -89,10 +94,15 @@ namespace AppApiDapper.Services.Repository
                 transaction: Transaction
                 );
         }
-        public async Task<IEnumerable<UserModel>> GetAll(int index)
+        public async Task<IEnumerable<UserModel>> GetAll(int pageIndex, int pageSize)
         {
-            string q = @"exec usp_getUser";
+            string q = @"exec usp_getUser @pageIndex, @pageSize";
             var rs = await Connection.QueryAsync<AspnetUser>(q,
+                            param: new
+                            {
+                                pageIndex = pageIndex,
+                                pageSize = pageSize
+                            },
                             transaction: Transaction);
             
             return rs.Select(x => new UserModel
@@ -101,7 +111,7 @@ namespace AppApiDapper.Services.Repository
                 UserName = x.UserName,
                 UserType = x.UserType,
                 password = x.password
-            }).ToList().Skip((index - 1) * 2).Take(2);
+            }).ToList();
         }
     }
 

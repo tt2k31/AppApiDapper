@@ -14,6 +14,6 @@ namespace WebData.Entities
         public string? Email { get; set; }
         public int Status { get; set; }
 
-        public AspnetUser User { get; set; } = null!;
+        public virtual AspnetUser User { get; set; } = null!;
     }
 }

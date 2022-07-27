@@ -3,6 +3,6 @@ namespace AppApiDapper.Services.Interface
 {
     public interface ILogin
     {
-        Task<LoginModel> Authenticate(string username, string password);
+        Task<UserModel> Authenticate(string username, string password);
     }
 }

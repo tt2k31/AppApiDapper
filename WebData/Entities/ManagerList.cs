@@ -9,8 +9,8 @@ namespace WebData.Entities
         [Key]
         public Guid OrganizationId { get; set; }
 
-        public AspnetUser AspnetUser { get; set; }
-        public AspnetOrganization AspnetOrganization { get; set; }
+        public virtual AspnetUser AspnetUser { get; set; }
+        public virtual AspnetOrganization AspnetOrganization { get; set; }
 
     }
 }

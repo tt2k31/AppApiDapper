@@ -17,6 +17,6 @@ namespace WebData.Entities
         public string? Description { get; set; }
         public int Status { get; set; }
 
-        public ICollection<ManagerList> ManagerLists { get; set; }
+        public virtual ICollection<ManagerList> ManagerLists { get; set; }
     }
 }

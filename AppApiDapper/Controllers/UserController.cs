@@ -15,28 +15,32 @@ namespace AppApiDapper.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
-    {        
+    {
+        private readonly MyDBContext _context;
         private readonly ILogger<UserController> _logger;
         private readonly IConfiguration _config;
         public UserController(
             IConfiguration config,
-            ILogger<UserController> logger
+            ILogger<UserController> logger,
+            MyDBContext context
             )
-        {            
+        {
+            _context = context;
             _config = config;
             _logger = logger;
         }
 
         // GET: api/<UserController>v
-        [HttpGet("{index:int}")]
-        
-        public async Task<IActionResult> GetAll(int index)
+        [HttpGet]
+        [AllowAnonymous]
+
+        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
         {
             try
             {
                 using (var uow = new UnitOfWork(_config))
                 {
-                    var ds = await uow.UserRepository.GetAll(index);                    
+                    var ds = await uow.UserRepository.GetAll(pageIndex, pageSize);
                     return Ok(ds);
                 }
             }
@@ -60,8 +64,9 @@ namespace AppApiDapper.Controllers
                     return Ok(ds);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError("err userGetById: " + ex.Message);
                 return BadRequest();
             }
         }
@@ -69,6 +74,7 @@ namespace AppApiDapper.Controllers
         // POST api/<UserController>
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Post(UserModel model)
         {
             try
@@ -80,8 +86,9 @@ namespace AppApiDapper.Controllers
                     return Ok();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError("err userAdd: " + ex.Message);
                 return BadRequest();
             }
         }
@@ -99,27 +106,31 @@ namespace AppApiDapper.Controllers
                     return Ok();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError("err userUpdate: " + ex.Message);
                 return BadRequest();
             }
         }
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                using (var uow = new UnitOfWork(_config))
+                using (var uow = new UnitOfWork(_context))
                 {
                     await uow.UserRepository.Delete(id);
-                    await uow.Commit();
+                    //await uow.Commit();
+                    await uow.CompleteAsync();
                     return Ok();
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError("err userDel: " + ex.Message);
                 return BadRequest();
             }
         }

@@ -14,15 +14,24 @@ namespace AppApiDapper.Services.Repository
             _context = context;
         }
 
-        public async Task<LoginModel> Authenticate(string username, string password)
+        public async Task<UserModel> Authenticate(string username, string password)
         {
             var rs = await _context.AspnetUsers.FirstOrDefaultAsync(x => 
                         x.UserName ==username && x.password ==password);
-            return new LoginModel
+            if(rs != null)
             {
-                UserName = username,
-                password = password
-            };
+                return new UserModel
+                {
+                    UserId = rs.UserId,
+                    UserName = username,
+                    password = password,
+                    UserType = rs.UserType
+                };
+            } else
+            {
+                return null;
+            }
+            
             
         }
     }

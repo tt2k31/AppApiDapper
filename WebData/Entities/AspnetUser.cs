@@ -16,8 +16,8 @@ namespace WebData.Entities
         public int? UserType { get; set; }
         public string password { get; set; }
 
-        public  AspnetMembership AspnetMembership { get; set; } = null!;
+        public virtual AspnetMembership AspnetMembership { get; set; } = null!;
 
-        public ICollection<ManagerList> ManagerLists { get; set; }
+        public virtual ICollection<ManagerList> ManagerLists { get; set; }
     }
 }

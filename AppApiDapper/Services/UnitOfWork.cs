@@ -27,6 +27,10 @@ namespace AppApiDapper.Services
         {
             _logger = logger;
         }
+        public UnitOfWork(MyDBContext context)
+        {
+            _context = context;
+        }
         public UnitOfWork(IConfiguration config)
         {
             
@@ -65,7 +69,7 @@ namespace AppApiDapper.Services
             get
             {
                 return _userRepository ??
-                    (_userRepository = new UserRepository(_transaction));
+                    (_userRepository = new UserRepository(_transaction,_context));
             }
         }
         public ILogin Login

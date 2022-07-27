@@ -19,14 +19,17 @@ namespace AppApiDapper.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        
         private readonly Appsettings _appsetting;
         private readonly MyDBContext _context;
         private ILogin _login;
         public AccountController(
+            
           IOptions<Appsettings> appsetting,
          MyDBContext context,
          ILogin login)
         {
+            
             _appsetting = appsetting.Value;
             _context = context;
             _login = login;
@@ -34,24 +37,21 @@ namespace AppApiDapper.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var rs = await _context.AspnetUsers.FirstOrDefaultAsync(x =>
-                    x.UserName == model.UserName && x.password == model.password);
-            if (rs == null)
+                        
+            using (var uow = new UnitOfWork(_context))
             {
-                return Unauthorized();
+                var rs = await uow.Login.Authenticate(model.UserName, model.password);
+                if (rs == null)
+                {
+                    return Unauthorized();
+                }
+                var loginRes = new LoginResModel();
+                loginRes.UserName = model.UserName;
+                loginRes.token = await GenToken(rs);
+                return Ok(loginRes);
             }
-            var user = await _login.Authenticate(model.UserName, model.password);
-            if(user == null)
-            {
-                return Unauthorized();
-            }
-
-            var loginRes = new LoginResModel();
-            loginRes.UserName = model.UserName;
-            loginRes.token = await GenToken(rs);
-            return Ok(loginRes);
         }
-        private async Task<string> GenToken(AspnetUser model)
+        private async Task<string> GenToken(UserModel model)
         {
             var JWtTokenHander = new JwtSecurityTokenHandler();
             var secretKeyByte = Encoding.UTF8.GetBytes(_appsetting.SecretKey);
@@ -59,12 +59,11 @@ namespace AppApiDapper.Controllers
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, model.UserName ),  
-                    new Claim("UserType",model.UserType.ToString()),
+                    new Claim(ClaimTypes.Name, model.UserName ),                    
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() ),                                        
                     //role                    
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMinutes(5),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey
                                 (secretKeyByte), SecurityAlgorithms.HmacSha512Signature)
 

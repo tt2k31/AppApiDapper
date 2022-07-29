@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using AppApiDapper.Cache;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 try
@@ -31,7 +32,7 @@ try
     builder.Services.Configure<Appsettings>
         (builder.Configuration.GetSection("AppSettings"));
 
-
+    builder.Services.AddTransient<RedisCacheSettings>();
     
     var k = configuration["AppSettings:SecretKey"];
 

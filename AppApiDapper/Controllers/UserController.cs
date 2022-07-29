@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text;
 using System.Text.Json;
+using AppApiDapper.Cache;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,6 +40,7 @@ namespace AppApiDapper.Controllers
         // GET: api/<UserController>v
         [HttpGet]
         [AllowAnonymous]
+        [Cached(600)]
         public async Task<IActionResult> GetAll(int pageIndex, int pageSize)        
         {
             try

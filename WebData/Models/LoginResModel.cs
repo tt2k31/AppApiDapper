@@ -8,6 +8,7 @@ namespace WebData.Models
 {
     public class LoginResModel
     {
+        public Guid UserId { get; set; }
         public string UserName { get; set; }
         public string token { get; set; }
     }

@@ -47,6 +47,7 @@ namespace AppApiDapper.Controllers
                 }
                 var loginRes = new LoginResModel();
                 loginRes.UserName = model.UserName;
+                loginRes.UserId = rs.UserId;
                 loginRes.token = await GenToken(rs);
                 return Ok(loginRes);
             }
@@ -59,8 +60,10 @@ namespace AppApiDapper.Controllers
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, model.UserName ),                    
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() ),                                        
+                    new Claim("id", model.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, model.UserName ),  
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),                    
+                    
                     //role                    
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(5),

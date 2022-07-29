@@ -36,7 +36,7 @@ namespace AppApiDapper.Services.Repository
 
         public async Task<IEnumerable<UserModel>> All()
         {
-            string q = @"exec usp_getUser";
+            string q = @"exec usp_getAllUser ";
             var rs = await Connection.QueryAsync<AspnetUser>(q,
                             transaction: Transaction);
             return rs.Select( x => new UserModel
@@ -112,6 +112,25 @@ namespace AppApiDapper.Services.Repository
                 UserType = x.UserType,
                 password = x.password
             }).ToList();
+        }
+
+        public async Task<UserModel> GetByName(string name)
+        {
+            var user = _context.AspnetUsers.FirstOrDefault(u => u.UserName == name);
+            if(user == null)
+            {
+                return null;
+            }    
+            else
+            {
+                return new UserModel
+                {
+                    UserId = user.UserId,
+                    UserName = user.UserName,
+                    UserType = user.UserType,
+                    password = user.password
+                };
+            }    
         }
     }
 

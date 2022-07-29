@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 try
@@ -16,17 +17,22 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Add services to the container.
+    ConfigurationManager configuration = builder.Configuration;
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
     builder.Services.AddDbContext<MyDBContext>(o =>
         o.UseSqlServer(builder.Configuration.GetConnectionString("MyDb")));
+    builder.Services.AddStackExchangeRedisCache(o =>
+    {
+        o.Configuration = configuration["RedisCacheUrl"];
+    });
     builder.Services.Configure<Appsettings>
         (builder.Configuration.GetSection("AppSettings"));
 
 
-    ConfigurationManager configuration = builder.Configuration;
+    
     var k = configuration["AppSettings:SecretKey"];
 
     var secretKeyByte = Encoding.UTF8.GetBytes(k);
